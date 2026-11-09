@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Consciência Negra — 40 histórias de resistência</title>
+  <meta name="description" content="Projeto escolar sobre consciência negra: Zumbi dos Palmares e as pesquisas dos alunos sobre personalidades negras que transformaram o Brasil.">
+  <meta name="theme-color" content="#0a0a0a">
+
+  <!-- Open Graph: troque a URL pelas do seu repositório no GitHub Pages -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Consciência Negra — 40 histórias de resistência">
+  <meta property="og:description" content="Zumbi dos Palmares e as pesquisas dos alunos sobre personalidades negras que transformaram o Brasil.">
+  <meta property="og:image" content="assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:locale" content="pt_BR">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230a0a0a'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23c24b2e'/%3E%3C/svg%3E">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/global.css">
+</head>
+<body>
+  <a class="skip" href="#main">Ir para o conteúdo</a>
+  <div class="grain" aria-hidden="true"></div>
+
+  <header class="nav" id="nav">
+    <a class="nav__brand" href="index.html">
+      <span class="nav__dot" aria-hidden="true"></span>
+      <span>Consciência Negra</span>
+    </a>
+    <nav class="nav__links" aria-label="Navegação principal">
+      <a href="#pesquisas">Pesquisas</a>
+      <a href="sobre.html">Sobre</a>
+      <a href="qr.html">QR</a>
+    </nav>
+  </header>
+
+  <main id="main">
+
+    <!-- ================= 01 — HERO ================= -->
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero__bg" id="heroBg" aria-hidden="true">Zumbi</div>
+      <div class="hero__glow" aria-hidden="true"></div>
+      <div class="hero__main" id="hero"></div>
+      <div class="hero__scroll" aria-hidden="true">role</div>
+      <div class="marquee" aria-hidden="true">
+        <div class="marquee__track" id="marqueeTrack"></div>
+      </div>
+    </section>
+
+    <!-- ================= 02 — LEGADO ================= -->
+    <section class="legado section" id="legado" aria-labelledby="legado-title">
+      <div id="legadoHost"></div>
+    </section>
+
+    <!-- ================= 03 — PESQUISAS ================= -->
+    <section class="pesquisas section" id="pesquisas" aria-labelledby="pesquisas-title">
+      <div class="wrap">
+        <div class="pesquisas__head">
+          <div>
+            <p class="chapter">03 — Pesquisas</p>
+            <h2 class="pesquisas__title" id="pesquisas-title">As histórias<br>da turma</h2>
+          </div>
+          <p class="pesquisas__count" id="contador" aria-live="polite"></p>
+        </div>
+
+        <div id="aviso"></div>
+
+        <div class="toolbar">
+          <div class="search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <circle cx="11" cy="11" r="7"></circle>
+              <path d="m20 20-3.5-3.5"></path>
+            </svg>
+            <label class="sr-only" for="busca">Buscar por nome ou tema</label>
+            <input id="busca" type="search" placeholder="Buscar por nome ou tema…" autocomplete="off">
+          </div>
+          <div class="chips" id="chips" role="group" aria-label="Filtrar por categoria"></div>
+        </div>
+
+        <div class="grid" id="grid"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer__top">
+      <p class="footer__mark">Consciência<br><span>Negra</span></p>
+      <div class="footer__cols">
+        <div>
+          <h3>Projeto</h3>
+          <ul>
+            <li><a href="sobre.html">Sobre o trabalho</a></li>
+            <li><a href="qr.html">QR code do site</a></li>
+            <li><a href="#pesquisas">Todas as pesquisas</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3>Turma</h3>
+          <ul>
+            <li id="footTurma">—</li>
+            <li id="footProfessor">—</li>
+            <li id="footAno">—</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Memória</h3>
+          <ul>
+            <li>20 de novembro</li>
+            <li>Dia Nacional de Zumbi<br>e da Consciência Negra</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <span>Feito por alunos. Com fontes e respeito.</span>
+      <span id="footAno2">—</span>
+    </div>
+  </footer>
+
+  <noscript>
+    <p style="padding:20px;color:#f4efe6">Este site usa JavaScript para montar as pesquisas. Ative o JavaScript para ver o conteúdo completo.</p>
+  </noscript>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

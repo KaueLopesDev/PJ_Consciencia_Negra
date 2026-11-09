@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>QR code do site — Consciência Negra</title>
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#0a0a0a">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 fill=%27%230a0a0a%27/%3E%3Ccircle cx=%2716%27 cy=%2716%27 r=%277%27 fill=%27%23c24b2e%27/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/global.css">
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+
+  <main class="qr">
+    <div class="qr__box">
+      <p class="chapter" style="justify-content:center;display:flex">Acesso rápido</p>
+      <h1 class="qr__title" style="margin-top:14px">Aponte a<br>câmera</h1>
+      <p class="qr__sub">
+        Este é o QR code do site. Imprima, cole no cartaz do trabalho e
+        deixe a turma e os professores abrirem direto no celular.
+      </p>
+
+      <div class="qr__frame">
+        <img id="qrImg" alt="QR code para abrir o site no celular" width="300" height="300">
+      </div>
+
+      <p class="qr__url" id="qrUrl"></p>
+
+      <div style="margin-top:22px">
+        <label class="sr-only" for="urlInput">Endereço do site</label>
+        <input id="urlInput" class="search input" type="url"
+          style="width:100%;padding:12px 14px;background:rgba(244,239,230,.04);border:1px solid var(--line);border-radius:2px;font-size:13px"
+          placeholder="https://usuario.github.io/repositorio/">
+      </div>
+
+      <div class="qr__actions">
+        <button class="btn btn--solid" type="button" id="gerar">Gerar QR</button>
+        <button class="btn" type="button" id="imprimir">Imprimir</button>
+      </div>
+
+      <p class="qr__sub" style="margin-top:18px">
+        Dica: no GitHub Pages o endereço fica
+        <b style="color:var(--gold)">https://SEU-USUARIO.github.io/NOME-DO-REPO/</b>
+      </p>
+    </div>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    (function () {
+      var input = document.getElementById("urlInput");
+      var img = document.getElementById("qrImg");
+      var label = document.getElementById("qrUrl");
+      var toast = document.getElementById("toast");
+
+      function autoUrl() {
+        if (location.protocol === "file:") return "";
+        return location.href.split("#")[0].split("?")[0].replace(/qr\.html$/i, "");
+      }
+
+      function gerar() {
+        var url = (input.value || "").trim();
+        if (!url) {
+          toast.textContent = "Digite o endereço do site";
+          toast.classList.add("is-on");
+          setTimeout(function () { toast.classList.remove("is-on"); }, 2200);
+          return;
+        }
+        img.src = "https://api.qrserver.com/v1/create-qr-code/?size=600x600&margin=8" +
+          "&color=0A0A0A&bgcolor=F4EFE6&data=" + encodeURIComponent(url);
+        label.textContent = url;
+      }
+
+      var inicial = autoUrl();
+      if (inicial) {
+        input.value = inicial;
+        gerar();
+      } else {
+        input.value = "https://SEU-USUARIO.github.io/NOME-DO-REPO/";
+        img.src = "https://api.qrserver.com/v1/create-qr-code/?size=600x600&margin=8" +
+          "&color=0A0A0A&bgcolor=F4EFE6&data=" + encodeURIComponent(input.value);
+        label.textContent = input.value;
+      }
+
+      document.getElementById("gerar").addEventListener("click", gerar);
+      document.getElementById("imprimir").addEventListener("click", function () { window.print(); });
+      input.addEventListener("keydown", function (e) { if (e.key === "Enter") gerar(); });
+    })();
+  </script>
+</body>
+</html>

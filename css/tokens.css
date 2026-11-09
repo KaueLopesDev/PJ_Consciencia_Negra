@@ -1,0 +1,63 @@
+/* ============================================================
+   TOKENS — cores, tipografia, espaçamento, movimento
+   ============================================================ */
+:root {
+  /* ── Cores de marca ── */
+  --ink: #0a0a0a;
+  --ink-2: #111110;
+  --bone: #f4efe6;
+  --clay: #c24b2e;
+  --clay-deep: #94331d;   /* hover com --bone ≈ 6.67:1 ✓ AA */
+  --gold: #d9a441;
+  --forest: #14403a;
+  --muted: #8a8178;
+
+  /* ── Bordas / divisores ── */
+  --line: rgba(244, 239, 230, 0.14);
+  --line-soft: rgba(244, 239, 230, 0.08);
+
+  /* ── Texto por hierarquia ──
+     Razões de contraste medidas (WCAG 2.2, fundo --ink #0a0a0a):
+     --text-1  #f4efe6                  ≈ 17.29 : 1 ✓ AAA
+     --text-2  rgba(244,239,230,.70)    ≈  8.57 : 1 ✓ AAA
+     --text-2  sobre --ink-2 #111110    ≈  8.37 : 1 ✓ AAA
+     --muted   #8a8178                  ≈  5.18 : 1 ✓ AA
+     --muted   sobre --ink-2            ≈  4.94 : 1 ✓ AA
+     --clay    #c24b2e                  ≈  4.09 : 1 ✗ só texto grande/decorativo
+     --gold    #d9a441                  ≈  8.80 : 1 ✓ AAA
+     Regra: --muted fica reservado a texto grande ou decorativo;
+     texto pequeno usa --text-2.
+  ── */
+  --text-1: #f4efe6;                       /* corpo principal */
+  --text-2: rgba(244, 239, 230, 0.70);     /* secundário (8.57:1 sobre --ink) */
+
+  /* ── Famílias tipográficas ── */
+  --display: "Anton", "Arial Narrow", Impact, sans-serif;
+  --serif: "Instrument Serif", Georgia, "Times New Roman", serif;
+  --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  /* ── Escala tipográfica mínima (em px) ──
+     Regra: texto corrido ≥ 13px; uppercase+tracking ≥ 11px.
+     Nenhum valor solto abaixo de 11px permanece no CSS.
+  ── */
+  --fs-micro:  11px;   /* uppercase com tracking — limite absoluto */
+  --fs-small:  13px;   /* corpo secundário, legendas, fontes */
+  --fs-body-s: 15px;   /* corpo de apoio */
+  --fs-body:   16px;   /* corpo de texto padrão */
+
+  /* ── Grão ── */
+  --grain-opacity: 0.055;   /* mesma leitura da textura anterior */
+  --grain-size: 160px;      /* tile 1-bit de 160×160 (~3,4 KB) */
+  --grain-z: 50;            /* abaixo do nav (100) e do toast (9500) */
+
+  /* ── Espaçamento ── */
+  --pad: clamp(20px, 5vw, 72px);
+  --gap: clamp(16px, 2.2vw, 24px);
+  --nav-h: 56px;
+
+  /* ── Movimento ── */
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --t-fast: 200ms;
+  --t-mid: 500ms;
+  --t-slow: 900ms;
+}

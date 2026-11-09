@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Sobre o projeto — Consciência Negra</title>
+  <meta name="description" content="Como o projeto Consciência Negra foi feito: pesquisa, curadoria, fontes e créditos.">
+  <meta name="theme-color" content="#0a0a0a">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 fill=%27%230a0a0a%27/%3E%3Ccircle cx=%2716%27 cy=%2716%27 r=%277%27 fill=%27%23c24b2e%27/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/global.css">
+</head>
+<body>
+  <a class="skip" href="#main">Ir para o conteúdo</a>
+  <div class="grain" aria-hidden="true"></div>
+
+  <header class="nav" id="nav">
+    <a class="nav__brand" href="index.html">
+      <span class="nav__dot" aria-hidden="true"></span>
+      <span>Consciência Negra</span>
+    </a>
+    <nav class="nav__links" aria-label="Navegação principal">
+      <a href="index.html#pesquisas">Pesquisas</a>
+      <a href="qr.html">QR</a>
+    </nav>
+  </header>
+
+  <main id="main" class="simple">
+    <p class="chapter" data-reveal>Sobre</p>
+    <h1 class="simple__title" data-reveal>Um trabalho<br>sobre memória<br>e resistência</h1>
+    <p class="simple__lead" data-reveal>
+      Este site reúne as pesquisas da turma sobre personalidades negras que
+      transformaram o Brasil. O centro do projeto é Zumbi dos Palmares e o
+      Quilombo dos Palmares — mas cada card é um aluno contando outra história.
+    </p>
+
+    <div class="simple__grid">
+      <article class="simple__card" data-reveal>
+        <h2>O que é consciência negra</h2>
+        <p>É a memória, o orgulho e a luta da população negra brasileira. O 20 de novembro marca a morte de Zumbi dos Palmares, em 1695, e é o Dia Nacional de Zumbi e da Consciência Negra — feriado nacional desde 2023.</p>
+      </article>
+      <article class="simple__card" data-reveal>
+        <h2>Como foi feito</h2>
+        <p>Cada aluno escolheu uma personalidade, pesquisou em fontes confiáveis e escreveu um resumo. O site organiza essas pesquisas em um template único, para que todas as histórias tenham o mesmo espaço e o mesmo peso.</p>
+      </article>
+      <article class="simple__card" data-reveal>
+        <h2>Regras de conteúdo</h2>
+        <p>Nada de fatos inventados. Toda página lista as fontes consultadas. Imagens só com licença livre e crédito. Religiões de matriz africana são tratadas com o nome correto e com respeito.</p>
+      </article>
+      <article class="simple__card" data-reveal>
+        <h2>Acessibilidade</h2>
+        <p>Contraste alto, navegação por teclado, textos alternativos nas imagens e respeito a quem prefere menos animação no sistema. Um site sobre consciência negra não pode excluir ninguém.</p>
+      </article>
+      <article class="simple__card" data-reveal>
+        <h2>Feito com</h2>
+        <p>HTML, CSS e JavaScript puros. Sem framework, sem build, sem banco de dados. Roda em qualquer navegador e é publicado de graça no GitHub Pages.</p>
+      </article>
+      <article class="simple__card" data-reveal>
+        <h2>Créditos</h2>
+        <p>Pesquisa: alunos da turma. Orientação: professor responsável. Tipografia: Anton, Instrument Serif e Inter (Google Fonts). Todo o conteúdo textual é de responsabilidade dos autores das pesquisas.</p>
+      </article>
+    </div>
+
+    <p style="margin-top:40px" data-reveal>
+      <a class="btn btn--solid" href="index.html#pesquisas">Ver as pesquisas</a>
+    </p>
+  </main>
+
+  <footer class="footer">
+    <div class="footer__bottom">
+      <span>Projeto Consciência Negra · 20 de novembro</span>
+      <a href="index.html">Voltar ao início</a>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var nav = document.getElementById("nav");
+      var on = function () { nav.classList.toggle("is-scrolled", window.scrollY > 40); };
+      on(); window.addEventListener("scroll", on, { passive: true });
+
+      var els = document.querySelectorAll("[data-reveal]");
+      if (!("IntersectionObserver" in window)) {
+        els.forEach(function (el) { el.classList.add("is-in"); });
+        return;
+      }
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            e.target.classList.add("is-in");
+            io.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: "0px 0px -6% 0px" });
+      els.forEach(function (el) { io.observe(el); });
+    })();
+  </script>
+</body>
+</html>
