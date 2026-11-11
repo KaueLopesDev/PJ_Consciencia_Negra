@@ -4,37 +4,49 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>QR code do site — Consciência Negra</title>
+  <meta name="description" content="Gere e imprima o QR code que abre o site Consciência Negra no celular.">
   <meta name="robots" content="noindex">
-  <meta name="theme-color" content="#0a0a0a">
+  <meta name="theme-color" content="#f4efe6">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 fill=%27%230a0a0a%27/%3E%3Ccircle cx=%2716%27 cy=%2716%27 r=%277%27 fill=%27%23c24b2e%27/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/tokens.css">
   <link rel="stylesheet" href="css/global.css">
 </head>
 <body>
-  <div class="grain" aria-hidden="true"></div>
+  <a class="skip" href="#main">Ir para o conteúdo</a>
 
-  <main class="qr">
+  <header class="nav" id="nav">
+    <a class="nav__brand" href="index.html">
+      <span class="nav__dot" aria-hidden="true"></span>
+      <span>Consciência <b>Negra</b></span>
+    </a>
+    <nav class="nav__links" aria-label="Navegação principal">
+      <a href="index.html#pesquisas">Pesquisas</a>
+      <a href="index.html">Início</a>
+    </nav>
+  </header>
+
+  <main id="main" class="qr">
     <div class="qr__box">
-      <p class="chapter" style="justify-content:center;display:flex">Acesso rápido</p>
-      <h1 class="qr__title" style="margin-top:14px">Aponte a<br>câmera</h1>
+      <p class="kicker">Acesso rápido</p>
+      <h1 class="qr__title">Aponte a<br>câmera</h1>
       <p class="qr__sub">
         Este é o QR code do site. Imprima, cole no cartaz do trabalho e
         deixe a turma e os professores abrirem direto no celular.
       </p>
 
       <div class="qr__frame">
-        <img id="qrImg" alt="QR code para abrir o site no celular" width="300" height="300">
+        <p class="qr__empty" id="qrEmpty">O QR aparece aqui<br>depois de gerar.</p>
+        <img id="qrImg" alt="QR code para abrir o site no celular" width="300" height="300" hidden>
       </div>
 
-      <p class="qr__url" id="qrUrl"></p>
+      <p class="qr__url" id="qrUrl" hidden></p>
 
-      <div style="margin-top:22px">
-        <label class="sr-only" for="urlInput">Endereço do site</label>
-        <input id="urlInput" class="search input" type="url"
-          style="width:100%;padding:12px 14px;background:rgba(244,239,230,.04);border:1px solid var(--line);border-radius:2px;font-size:13px"
+      <div class="qr__field">
+        <label for="urlInput">Endereço do site</label>
+        <input id="urlInput" type="url" inputmode="url" autocomplete="url" spellcheck="false"
           placeholder="https://usuario.github.io/repositorio/">
       </div>
 
@@ -43,9 +55,8 @@
         <button class="btn" type="button" id="imprimir">Imprimir</button>
       </div>
 
-      <p class="qr__sub" style="margin-top:18px">
-        Dica: no GitHub Pages o endereço fica
-        <b style="color:var(--gold)">https://SEU-USUARIO.github.io/NOME-DO-REPO/</b>
+      <p class="qr__back">
+        <a class="link" href="index.html">Voltar ao início</a>
       </p>
     </div>
   </main>
@@ -56,24 +67,43 @@
     (function () {
       var input = document.getElementById("urlInput");
       var img = document.getElementById("qrImg");
+      var empty = document.getElementById("qrEmpty");
       var label = document.getElementById("qrUrl");
       var toast = document.getElementById("toast");
+      var toastTimer;
+
+      function aviso(texto) {
+        toast.textContent = texto;
+        toast.classList.add("is-on");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(function () { toast.classList.remove("is-on"); }, 2400);
+      }
 
       function autoUrl() {
         if (location.protocol === "file:") return "";
         return location.href.split("#")[0].split("?")[0].replace(/qr\.html$/i, "");
       }
 
+      function normalizar(valor) {
+        var url = (valor || "").trim();
+        if (!url) return "";
+        if (!/^https?:\/\//i.test(url)) url = "https://" + url;
+        return url;
+      }
+
       function gerar() {
-        var url = (input.value || "").trim();
+        var url = normalizar(input.value);
         if (!url) {
-          toast.textContent = "Digite o endereço do site";
-          toast.classList.add("is-on");
-          setTimeout(function () { toast.classList.remove("is-on"); }, 2200);
+          aviso("Digite o endereço do site");
+          input.focus();
           return;
         }
+        input.value = url;
         img.src = "https://api.qrserver.com/v1/create-qr-code/?size=600x600&margin=8" +
           "&color=0A0A0A&bgcolor=F4EFE6&data=" + encodeURIComponent(url);
+        img.hidden = false;
+        empty.hidden = true;
+        label.hidden = false;
         label.textContent = url;
       }
 
@@ -81,11 +111,6 @@
       if (inicial) {
         input.value = inicial;
         gerar();
-      } else {
-        input.value = "https://SEU-USUARIO.github.io/NOME-DO-REPO/";
-        img.src = "https://api.qrserver.com/v1/create-qr-code/?size=600x600&margin=8" +
-          "&color=0A0A0A&bgcolor=F4EFE6&data=" + encodeURIComponent(input.value);
-        label.textContent = input.value;
       }
 
       document.getElementById("gerar").addEventListener("click", gerar);

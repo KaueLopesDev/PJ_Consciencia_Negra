@@ -46,9 +46,10 @@
   }
 
   function notFound() {
+    document.title = "Pesquisa não encontrada — Consciência Negra";
     document.getElementById("pessoa").innerHTML =
       '<section class="simple">' +
-        '<p class="chapter">404 — Pesquisa</p>' +
+        '<p class="kicker">404 — Pesquisa</p>' +
         '<h1 class="simple__title">Essa história<br>não foi<br>encontrada</h1>' +
         '<p class="simple__lead">O link pode estar incompleto ou a pesquisa ainda não foi publicada. ' +
         "Volte para a grade e escolha outro nome.</p>" +
@@ -56,23 +57,49 @@
       "</section>";
   }
 
+  function heroMedia(p) {
+    if (!p.foto) {
+      var words = String(p.nome).split(" ");
+      var first = words.shift();
+      var rest = words.join(" ");
+      return '<figure class="person__figure person__figure--typo">' +
+        '<span class="typo__ini" aria-hidden="true">' + esc(initials(p.nome)) + "</span>" +
+        '<span class="typo__nome">' + esc(first) + (rest ? "<br>" + esc(rest) : "") + "</span>" +
+        "<figcaption>" + esc(p.fotoCredito || "Sem imagem livre verificada.") + "</figcaption>" +
+      "</figure>";
+    }
+
+    /* Imagens pequenas (Maria Firmina e Conceição Evaristo): só no card,
+       nunca ampliadas no hero da página interna. */
+    if (p.semHeroFoto) return "";
+
+    return '<figure class="person__figure">' +
+      '<img src="' + esc(p.foto) + '" alt="' + esc(p.fotoAlt || "Retrato de " + p.nome) +
+        '" width="900" height="1200" fetchpriority="high" decoding="async" style="object-position:' +
+        esc(p.fotoPos || "50% 30%") + '">' +
+      (p.fotoCredito ? "<figcaption>" + esc(p.fotoCredito) + "</figcaption>" : "") +
+    "</figure>";
+  }
+
   function renderGaleria(g) {
     if (!g || !g.length) return "";
-    return '<div class="galeria">' + g.map(function (item) {
-      return "<figure>" +
-        '<img src="' + esc(item.src) + '" alt="' + esc(item.alt || "") + '" loading="lazy" decoding="async">' +
-        (item.credito ? "<figcaption>" + esc(item.credito) + "</figcaption>" : "") +
-      "</figure>";
-    }).join("") + "</div>";
+    return '<section class="galeria" aria-label="Documentos e imagens">' +
+      g.map(function (item) {
+        return "<figure>" +
+          '<img src="' + esc(item.src) + '" alt="' + esc(item.alt || "") +
+            '" loading="lazy" decoding="async" width="800" height="600">' +
+          (item.credito ? "<figcaption>" + esc(item.credito) + "</figcaption>" : "") +
+        "</figure>";
+      }).join("") +
+    "</section>";
   }
 
   function renderVideo(v) {
     if (!v) return "";
     if (v.embed) {
       return '<div class="video" id="videoBox">' +
-        '<button class="video__poster" type="button" id="playVideo" ' +
-          'aria-label="Reproduzir vídeo">' +
-          (v.poster ? '<img src="' + esc(v.poster) + '" alt="">' : "") +
+        '<button class="video__poster" type="button" id="playVideo" aria-label="Reproduzir vídeo">' +
+          (v.poster ? '<img src="' + esc(v.poster) + '" alt="" loading="lazy" decoding="async">' : "") +
           '<span class="video__play" aria-hidden="true">▶</span>' +
           "<span>assistir</span>" +
         "</button>" +
@@ -91,8 +118,8 @@
 
   function renderFontes(f) {
     if (!f || !f.length) return "";
-    return '<section class="fontes">' +
-      "<h2>Fontes consultadas</h2>" +
+    return '<section class="fontes" aria-labelledby="fontes-title">' +
+      '<h2 id="fontes-title">Fontes consultadas</h2>' +
       "<ol>" + f.map(function (s) {
         var label = esc(s.titulo || s.url || "Fonte");
         var veiculo = s.veiculo ? " — " + esc(s.veiculo) : "";
@@ -111,9 +138,10 @@
       ["jan.", "fev.", "mar.", "abr.", "maio", "jun.", "jul.", "ago.", "set.", "out.", "nov.", "dez."][hoje.getMonth()] +
       " " + hoje.getFullYear();
     var url = window.location.href;
+    var instituicao = [C.escola, C.ano].filter(function (v) { return v && String(v).trim(); }).join(", ");
     return p.nome + ". Pesquisa escolar. In: PROJETO CONSCIÊNCIA NEGRA. " +
-      (C.escola || "") + ", " + (C.ano || "") + ". Disponível em: " + url +
-      ". Acesso em: " + data + ".";
+      (instituicao ? instituicao + ". " : "") +
+      "Disponível em: " + url + ". Acesso em: " + data + ".";
   }
 
   function renderNav(p) {
@@ -130,63 +158,65 @@
       "</a>";
     }
 
-    return '<nav class="pessoa__nav" aria-label="Outras pesquisas">' +
+    return '<nav class="person__nav" aria-label="Outras pesquisas">' +
       item(prev, "← anterior") + item(next, "próxima →") +
     "</nav>";
   }
 
   function render(p) {
     document.title = p.nome + " — Consciência Negra";
+    var meta = document.querySelector('meta[name="description"]');
+    if (meta) meta.setAttribute("content", p.resumoCard || p.resumo || "");
 
-    var heroMedia = p.foto
-      ? '<div class="pessoa__hero-media"><img src="' + esc(p.foto) + '" alt="' +
-        esc(p.fotoAlt || "Retrato de " + p.nome) + '" fetchpriority="high" decoding="async"></div>'
-      : '<div class="pessoa__hero-media"><div class="ph ph--hero" aria-hidden="true"><span>' +
-        esc(initials(p.nome)) + "</span></div></div>";
+    var media = heroMedia(p);
 
     var ficha = [
-      ["Aluno(s)", (p.aluno && p.aluno.nomes) || "—"],
-      ["Turma", (p.aluno && p.aluno.turma) || C.turma || "—"],
+      ["Período", anos(p) || "Não registrado"],
+      ["Local", p.local || "—"],
       ["Categoria", (p.categorias || []).join(", ") || "—"],
+      p.aluno && p.aluno.nomes ? ["Aluno(a)", p.aluno.nomes] : null,
+      ["Turma", (p.aluno && p.aluno.turma) || C.turma || "—"],
       ["Leitura", (p.tempoLeitura || 2) + " min"]
-    ].map(function (row) {
-      return '<div class="ficha__item" data-reveal>' +
-        '<p class="ficha__k">' + esc(row[0]) + "</p>" +
-        '<p class="ficha__v">' + esc(row[1]) + "</p>" +
+    ].filter(Boolean).map(function (row) {
+      return '<div class="ficha__row">' +
+        '<dt class="ficha__k">' + esc(row[0]) + "</dt>" +
+        '<dd class="ficha__v">' + esc(row[1]) + "</dd>" +
       "</div>";
     }).join("");
 
-    var secoes = (p.secoes || []).map(function (s, si) {
-      return "<h2 data-reveal>" + esc(s.titulo) + "</h2>" + paragraphs(s.texto).replace(/<p>/g, '<p data-reveal>');
+    var secoes = (p.secoes || []).map(function (s) {
+      return "<h2>" + esc(s.titulo) + "</h2>" + paragraphs(s.texto);
     }).join("");
 
     document.getElementById("pessoa").innerHTML =
-      '<section class="pessoa__hero" aria-labelledby="pessoa-name">' +
-        heroMedia +
-        '<div class="pessoa__hero-content">' +
-          '<p class="pessoa__eyebrow" data-reveal>Pesquisa · ' +
-            esc((p.categorias && p.categorias[0]) || "Consciência Negra") + "</p>" +
-          '<h1 class="pessoa__name" id="pessoa-name" data-reveal>' + esc(p.nome) + "</h1>" +
-          '<div class="pessoa__dates" data-reveal>' +
-            (anos(p) ? "<span>" + esc(anos(p)) + "</span>" : "") +
-            (p.local ? "<span>" + esc(p.local) + "</span>" : "") +
+      '<article class="person">' +
+        '<header class="person__head' + (media ? "" : " person__head--nofoto") + '">' +
+          '<div class="person__intro">' +
+            '<p class="kicker person__eyebrow">Pesquisa · ' +
+              esc((p.categorias && p.categorias[0]) || "Consciência Negra") + "</p>" +
+            '<h1 class="person__name" id="pessoa-name">' + esc(p.nome) + "</h1>" +
+            '<p class="person__dates">' +
+              (anos(p) ? "<span>" + esc(anos(p)) + "</span>" : "") +
+              (p.local ? "<span>" + esc(p.local) + "</span>" : "") +
+            "</p>" +
           "</div>" +
-        "</div>" +
-      "</section>" +
+          media +
+        "</header>" +
 
-      '<div class="pessoa__body"><div class="wrap">' +
-        '<div class="ficha" data-reveal>' + ficha + "</div>" +
-        (p.resumo ? '<div class="resumo" data-reveal><p>' + esc(p.resumo) + "</p></div>" : "") +
-        '<div class="prose">' + secoes + "</div>" +
-        (p.galeria && p.galeria.length ? '<div class="galeria" data-reveal>' + renderGaleria(p.galeria).replace('<div class="galeria">', '').replace('</div>', '') + '</div>' : "") +
-        (p.video ? '<div class="video" data-reveal>' + renderVideo(p.video).replace('<div class="video">', '').replace('</div>', '') + '</div>' : "") +
-        (p.fontes && p.fontes.length ? '<section class="fontes" data-reveal>' + renderFontes(p.fontes).replace('<section class="fontes">', '').replace('</section>', '') + '</section>' : "") +
-        '<div class="abnt" data-reveal>' +
-          '<button class="btn" type="button" id="copyAbnt">Copiar citação ABNT</button>' +
-          '<span class="abnt__note">Use nas referências do trabalho.</span>' +
+        '<div class="person__body">' +
+          '<dl class="ficha" data-reveal>' + ficha + "</dl>" +
+          (p.resumo ? '<p class="person__resumo" data-reveal>' + esc(p.resumo) + "</p>" : "") +
+          '<div class="prose" data-reveal>' + secoes + "</div>" +
+          renderGaleria(p.galeria) +
+          renderVideo(p.video) +
+          renderFontes(p.fontes) +
+          '<div class="abnt" data-reveal>' +
+            '<button class="btn" type="button" id="copyAbnt">Copiar citação ABNT</button>' +
+            '<span class="abnt__note">Use nas referências do trabalho.</span>' +
+          "</div>" +
+          renderNav(p) +
         "</div>" +
-        '<nav class="pessoa__nav" data-reveal aria-label="Outras pesquisas">' + renderNav(p).replace('<nav class="pessoa__nav" aria-label="Outras pesquisas">', '').replace('</nav>', '') + '</nav>' +
-      "</div></div>";
+      "</article>";
 
     // Vídeo com click-to-load
     var play = document.getElementById("playVideo");
@@ -247,7 +277,7 @@
     observeReveals();
   }
 
-  /* ---------- REVEAL (copiado de app.js) ---------- */
+  /* ---------- REVEAL (abaixo da dobra) ---------- */
   function observeReveals() {
     var els = document.querySelectorAll("[data-reveal]:not(.is-in)");
     if (!("IntersectionObserver" in window)) {
@@ -261,7 +291,7 @@
           io.unobserve(e.target);
         }
       });
-    }, { threshold: 0.12, rootMargin: "0px 0px -6% 0px" });
+    }, { threshold: 0.08, rootMargin: "0px 0px -4% 0px" });
     els.forEach(function (el) { io.observe(el); });
   }
 
@@ -270,15 +300,6 @@
     var p = P.find(function (x) { return x.slug === slug; });
     if (!p) { notFound(); return; }
     render(p);
-
-    var nav = document.getElementById("nav");
-    if (nav) {
-      var onScroll = function () {
-        nav.classList.toggle("is-scrolled", window.scrollY > 40);
-      };
-      onScroll();
-      window.addEventListener("scroll", onScroll, { passive: true });
-    }
   }
 
   if (document.readyState === "loading") {

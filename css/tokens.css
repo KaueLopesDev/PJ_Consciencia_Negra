@@ -1,63 +1,62 @@
 /* ============================================================
-   TOKENS — cores, tipografia, espaçamento, movimento
+   TOKENS — sistema visual "cartaz de arquivo / zine"
+   Base papel, um único acento (terracota), duas famílias.
    ============================================================ */
 :root {
-  /* ── Cores de marca ── */
-  --ink: #0a0a0a;
-  --ink-2: #111110;
-  --bone: #f4efe6;
-  --clay: #c24b2e;
-  --clay-deep: #94331d;   /* hover com --bone ≈ 6.67:1 ✓ AA */
-  --gold: #d9a441;
-  --forest: #14403a;
-  --muted: #8a8178;
+  /* ── Papel e tinta ── */
+  --paper: #f4efe6;          /* fundo principal das seções de conteúdo */
+  --paper-2: #ebe4d7;        /* faixa/quadro levemente mais escuro */
+  --ink: #0a0a0a;            /* hero, rodapé, faixas de imagem */
+  --ink-soft: #1c1916;
 
-  /* ── Bordas / divisores ── */
-  --line: rgba(244, 239, 230, 0.14);
-  --line-soft: rgba(244, 239, 230, 0.08);
+  /* ── Acento único: terracota ── */
+  --clay: #c24b2e;           /* preenchimento, bordas, texto grande */
+  --clay-text: #9a3a22;      /* texto pequeno sobre papel (AA) */
 
-  /* ── Texto por hierarquia ──
-     Razões de contraste medidas (WCAG 2.2, fundo --ink #0a0a0a):
-     --text-1  #f4efe6                  ≈ 17.29 : 1 ✓ AAA
-     --text-2  rgba(244,239,230,.70)    ≈  8.57 : 1 ✓ AAA
-     --text-2  sobre --ink-2 #111110    ≈  8.37 : 1 ✓ AAA
-     --muted   #8a8178                  ≈  5.18 : 1 ✓ AA
-     --muted   sobre --ink-2            ≈  4.94 : 1 ✓ AA
-     --clay    #c24b2e                  ≈  4.09 : 1 ✗ só texto grande/decorativo
-     --gold    #d9a441                  ≈  8.80 : 1 ✓ AAA
-     Regra: --muted fica reservado a texto grande ou decorativo;
-     texto pequeno usa --text-2.
-  ── */
-  --text-1: #f4efe6;                       /* corpo principal */
-  --text-2: rgba(244, 239, 230, 0.70);     /* secundário (8.57:1 sobre --ink) */
+  /* ── Texto sobre papel ── */
+  --text: #1a1714;           /* ~15:1 sobre --paper */
+  --text-2: #4a423b;         /* ~7:1 */
+  --muted: #5e554c;          /* ~6.3:1 */
 
-  /* ── Famílias tipográficas ── */
+  /* ── Texto sobre preto ── */
+  --on-dark: #f4efe6;        /* ~17:1 sobre --ink */
+  --on-dark-2: rgba(244, 239, 230, 0.74);
+
+  /* ── Linhas ── */
+  --line: rgba(10, 10, 10, 0.18);
+  --line-soft: rgba(10, 10, 10, 0.10);
+  --line-dark: rgba(244, 239, 230, 0.22);
+  --line-dark-soft: rgba(244, 239, 230, 0.12);
+
+  /* ── Famílias (apenas duas) ── */
   --display: "Anton", "Arial Narrow", Impact, sans-serif;
-  --serif: "Instrument Serif", Georgia, "Times New Roman", serif;
   --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
-  /* ── Escala tipográfica mínima (em px) ──
-     Regra: texto corrido ≥ 13px; uppercase+tracking ≥ 11px.
-     Nenhum valor solto abaixo de 11px permanece no CSS.
-  ── */
-  --fs-micro:  11px;   /* uppercase com tracking — limite absoluto */
-  --fs-small:  13px;   /* corpo secundário, legendas, fontes */
-  --fs-body-s: 15px;   /* corpo de apoio */
-  --fs-body:   16px;   /* corpo de texto padrão */
-
-  /* ── Grão ── */
-  --grain-opacity: 0.055;   /* mesma leitura da textura anterior */
-  --grain-size: 160px;      /* tile 1-bit de 160×160 (~3,4 KB) */
-  --grain-z: 50;            /* abaixo do nav (100) e do toast (9500) */
+  /* ── Escala mínima: corpo ≥ 15px, uppercase ≥ 11px ── */
+  --fs-micro: 11px;
+  --fs-small: 13px;
+  --fs-body-s: 15px;
+  --fs-body: 16px;
+  --fs-lead: clamp(17px, 1.6vw, 20px);
 
   /* ── Espaçamento ── */
-  --pad: clamp(20px, 5vw, 72px);
-  --gap: clamp(16px, 2.2vw, 24px);
+  --pad: clamp(18px, 5vw, 72px);
+  --gap: clamp(16px, 2vw, 24px);
+  --max: 1400px;
   --nav-h: 56px;
 
-  /* ── Movimento ── */
-  --ease: cubic-bezier(0.16, 1, 0.3, 1);
-  --t-fast: 200ms;
-  --t-mid: 500ms;
-  --t-slow: 900ms;
+  /* ── Cantos (escala de arredondamento) ── */
+  --r-sm: 8px;
+  --r-md: 14px;
+  --r-lg: 22px;
+  --r-pill: 999px;
+
+  /* ── Sombras suaves (profundidade premium, sem glow) ── */
+  --shadow-img: 0 24px 60px rgba(10, 10, 10, 0.38);
+  --shadow-card: 0 18px 44px rgba(26, 23, 20, 0.16);
+
+  /* ── Movimento discreto ── */
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --t-fast: 180ms;
+  --t-mid: 420ms;
 }

@@ -1,6 +1,6 @@
 /* ============================================================
    APP — Home
-   Monta o hero, o legado, o marquee e a grade de pesquisas.
+   Monta o hero, o legado e a grade de pesquisas.
    Não precisa editar este arquivo: edite js/data.js.
    ============================================================ */
 (function () {
@@ -37,13 +37,8 @@
     return (p.categorias && p.categorias[0]) || "Pesquisa";
   }
 
-  function portraitHTML(p, extraClass) {
-    var cls = "ph" + (extraClass ? " " + extraClass : "");
-    if (p.foto) {
-      return '<img src="' + esc(p.foto) + '" alt="' + esc(p.fotoAlt || p.nome) +
-        '" fetchpriority="high" decoding="async">';
-    }
-    return '<div class="' + cls + '" aria-hidden="true"><span>' + esc(initials(p.nome)) + "</span></div>";
+  function hasPhoto(p) {
+    return Boolean(p.foto);
   }
 
   /* ---------- HERO ---------- */
@@ -56,44 +51,42 @@
     var first = words.shift();
     var rest = words.join(" ");
 
-    document.getElementById("heroBg").textContent = first;
+    var zumbi = null;
+    for (var zi = 0; zi < P.length; zi++) { if (P[zi].slug === "zumbi-dos-palmares") { zumbi = P[zi]; break; } }
+    var heroPos = (zumbi && zumbi.fotoPos) || "50% 25%";
 
     var media = central.foto
-      ? '<img src="' + esc(central.foto) + '" alt="' + esc(central.fotoAlt || nome) +
-        '" fetchpriority="high" decoding="async">'
-      : '<div class="ph ph--hero" aria-hidden="true"><span>' + esc(initials(nome)) + "</span></div>";
+      ? '<figure class="hero__figure">' +
+          '<span class="hero__tag" aria-hidden="true">Nº 01</span>' +
+          '<img src="' + esc(central.foto) + '" alt="' + esc(central.fotoAlt || nome) +
+            '" width="768" height="1024" fetchpriority="high" decoding="async" style="object-position:' + heroPos + '">' +
+          (central.fotoCredito
+            ? "<figcaption>" + esc(central.fotoCredito) + "</figcaption>"
+            : "") +
+        "</figure>"
+      : "";
 
     host.innerHTML =
-      '<p class="chapter">01 — ' + esc(first) + "</p>" +
-      '<p class="hero__eyebrow">' + esc(central.eyebrow || "20 DE NOVEMBRO") + "</p>" +
-      '<div class="hero__portrait' + (central.foto ? "" : " hero__portrait--art") + '">' + media + "</div>" +
+      '<p class="kicker hero__kicker">' + esc(central.eyebrow || "20 DE NOVEMBRO") + "</p>" +
       '<h1 class="hero__title" id="hero-title">' + esc(first) +
-        (rest ? "<br><em>" + esc(rest) + "</em>" : "") + "</h1>" +
+        (rest ? "<br><span>" + esc(rest) + "</span>" : "") + "</h1>" +
+      media +
       '<p class="hero__manifesto">' + esc(central.manifesto || "") + "</p>" +
-      '<div class="hero__meta">' +
+      '<p class="hero__meta">' +
         "<span>" + esc(central.anos || "") + "</span>" +
         "<span>" + esc(central.local || "") + "</span>" +
+      "</p>" +
+      '<div class="hero__actions">' +
+        '<a class="btn btn--solid" href="#pesquisas">Ver as 40 histórias</a>' +
+        '<a class="link" href="sobre.html">Sobre o projeto</a>' +
       "</div>";
-  }
-
-  /* ---------- MARQUEE ---------- */
-  function renderMarquee() {
-    var track = document.getElementById("marqueeTrack");
-    if (!track) return;
-    var nomes = P.map(function (p) { return p.nome; });
-    if (!nomes.length) nomes = ["Zumbi dos Palmares", "Dandara", "Luís Gama"];
-    var html = nomes.map(function (n) {
-      return '<span class="marquee__item">' + esc(n) + "</span>";
-    }).join("");
-    track.innerHTML = html + html;
   }
 
   /* ---------- LEGADO ---------- */
   function renderLegado() {
-    /* Usa "legadoHost" para não conflitar com o id da <section id="legado"> */
     var host = document.getElementById("legadoHost");
     if (!host) return;
-    var l = (central.legado || {});
+    var l = central.legado || {};
     var feitos = l.feitos || [];
     var tdl = l.linhaDoTempo || [];
     var impacto = l.impacto || [];
@@ -110,10 +103,10 @@
     }).join("");
 
     var timelineHTML = tdl.map(function (t) {
-      return '<div class="timeline__item" role="group">' +
+      return '<li class="timeline__item">' +
         '<span class="timeline__year">' + esc(t.ano) + "</span>" +
         '<p class="timeline__text">' + esc(t.texto) + "</p>" +
-      "</div>";
+      "</li>";
     }).join("");
 
     var statsHTML = impacto.map(function (s) {
@@ -125,85 +118,107 @@
     }).join("");
 
     host.innerHTML =
+      '<figure class="legado__figure legado__abertura" data-reveal>' +
+        '<img src="secoes/hero-serra-da-barriga.jpg" alt="Comemoração do Dia da Consciência Negra na Serra da Barriga" width="3960" height="2640" loading="lazy" decoding="async">' +
+        "<figcaption>Comemorações do Dia da Consciência Negra na Serra da Barriga — Ministério da Cultura · CC BY 2.0 · via Wikimedia Commons</figcaption>" +
+      "</figure>" +
+
       '<div class="legado__layout">' +
         '<div class="legado__head" data-reveal>' +
-          '<p class="chapter">02 — Legado</p>' +
+          '<p class="kicker">02 — Legado</p>' +
           '<h2 class="legado__title" id="legado-title">' +
             esc(l.titulo || "O que ele fez contra o racismo") + "</h2>" +
           '<p class="legado__intro">' + esc(l.intro || "") + "</p>" +
         "</div>" +
-        '<div class="legado__body">' + feitosHTML + "</div>" +
+        '<figure class="legado__figure legado__map" data-reveal>' +
+          '<img src="secoes/legado-mapa-palmares-1647.jpg" alt="Mapa da Capitania de Pernambuco com a representação do Quilombo dos Palmares, 1647" width="1378" height="1124" loading="lazy" decoding="async">' +
+          "<figcaption>Mapa de Palmares, 1647 — Frans Post · Domínio público · via Wikimedia Commons</figcaption>" +
+        "</figure>" +
       "</div>" +
+
+      '<div class="legado__body">' + feitosHTML + "</div>" +
+
       (l.citacao
         ? '<blockquote class="legado__quote" data-reveal>' +
             "<p>" + esc(l.citacao.texto) + "</p>" +
             "<cite>" + esc(l.citacao.autor) + "</cite>" +
           "</blockquote>"
         : "") +
+
       (tdl.length
         ? '<div class="legado__timeline-head" data-reveal>' +
-            '<p class="legado__timeline-title">Linha do tempo</p>' +
-            '<p class="legado__hint">arraste →</p>' +
+            '<h3 class="legado__timeline-title">Linha do tempo</h3>' +
           "</div>" +
-          '<div class="timeline" data-reveal>' + timelineHTML + "</div>"
+          '<ol class="timeline" data-reveal>' + timelineHTML + "</ol>"
         : "") +
-      (impacto.length ? '<div class="stats" data-reveal>' + statsHTML + "</div>" : "");
-  }
 
-  /* ---------- AVISO ---------- */
-  function renderAviso() {
-    var host = document.getElementById("aviso");
-    if (!host || !C.mostrarAvisoExemplo) return;
-    host.innerHTML =
-      '<div class="aviso" role="note">' +
-        "<p><b>Modo molde.</b> As pesquisas abaixo são exemplos para mostrar o formato. " +
-        "Troque os textos, os alunos e as fontes em <code>js/data.js</code>. " +
-        "Quando tudo estiver real, mude <code>mostrarAvisoExemplo</code> para <code>false</code>.</p>" +
-        '<button class="aviso__close" type="button" aria-label="Fechar aviso" data-dismiss>×</button>' +
-      "</div>";
-    host.querySelector("[data-dismiss]").addEventListener("click", function () {
-      host.innerHTML = "";
-    });
+      (impacto.length ? '<div class="stats" data-reveal>' + statsHTML + "</div>" : "");
   }
 
   /* ---------- GRID / FILTROS ---------- */
   var state = { cat: "Todas", q: "" };
 
-  function todasCategorias() {
-    var set = {};
+  function categoriasVisiveis() {
+    var count = {};
     P.forEach(function (p) {
-      (p.categorias || []).forEach(function (c) { set[c] = true; });
+      (p.categorias || []).forEach(function (c) { count[c] = (count[c] || 0) + 1; });
     });
-    return Object.keys(set).sort(function (a, b) { return a.localeCompare(b, "pt-BR"); });
+    return Object.keys(count)
+      .filter(function (c) { return count[c] >= 3; })
+      .sort(function (a, b) { return a.localeCompare(b, "pt-BR"); });
   }
 
   function renderChips() {
     var host = document.getElementById("chips");
     if (!host) return;
-    var cats = ["Todas"].concat(todasCategorias());
+    var cats = ["Todas"].concat(categoriasVisiveis());
     host.innerHTML = cats.map(function (c) {
       return '<button class="chip" type="button" data-cat="' + esc(c) +
         '" aria-pressed="' + (state.cat === c ? "true" : "false") + '">' + esc(c) + "</button>";
     }).join("");
   }
 
-  function cardHTML(p) {
-    var media = p.foto
-      ? '<img src="' + esc(p.foto) + '" alt="' + esc(p.fotoAlt || "Retrato de " + p.nome) +
-        '" loading="lazy" decoding="async" width="400" height="500">'
-      : '<div class="ph" aria-hidden="true"><span>' + esc(initials(p.nome)) + "</span></div>";
+  function typographicMedia(p, idx) {
+    var words = String(p.nome).split(" ");
+    var first = words.shift();
+    var rest = words.join(" ");
+    return '<div class="card__media card__media--typo" aria-hidden="true">' +
+      '<span class="card__idx" aria-hidden="true">' + String(idx + 1).padStart(2, "0") + "</span>" +
+      '<span class="typo__ini">' + esc(initials(p.nome)) + "</span>" +
+      '<span class="typo__nome">' + esc(first) +
+        (rest ? "<br>" + esc(rest) : "") + "</span>" +
+    "</div>";
+  }
 
-    return '<a class="card" href="pessoa.html?p=' + encodeURIComponent(p.slug) + '" data-reveal>' +
-      '<div class="card__media' + (p.foto ? "" : " card__media--art") + '">' + media +
-        '<span class="card__student">' + esc((p.aluno && p.aluno.nomes) || "Aluno") + "</span>" +
-      "</div>" +
+  function photoMedia(p, idx) {
+    return '<figure class="card__media">' +
+      '<span class="card__idx" aria-hidden="true">' + String(idx + 1).padStart(2, "0") + "</span>" +
+      '<img src="' + esc(p.foto) + '" alt="' + esc(p.fotoAlt || "Retrato de " + p.nome) +
+        '" loading="lazy" decoding="async" width="800" height="1000" style="object-position:' +
+        esc(p.fotoPos || "50% 30%") + '">' +
+    "</figure>";
+  }
+
+  function cardHTML(p, featured, idx) {
+    var aluno = p.aluno && p.aluno.nomes ? p.aluno.nomes : "";
+    var cat = firstCategory(p);
+    var credit = p.fotoCredito || "Sem imagem livre verificada.";
+
+    return '<a class="card' + (featured ? " card--featured" : "") +
+      '" href="pessoa.html?p=' + encodeURIComponent(p.slug) + '" data-reveal style="--rd:' + ((idx % 4) * 70) + 'ms">' +
+      (hasPhoto(p) ? photoMedia(p, idx) : typographicMedia(p, idx)) +
       '<div class="card__body">' +
+        '<p class="card__kicker">' + esc(cat) + "</p>" +
         '<h3 class="card__name">' + esc(p.nome) + "</h3>" +
         '<p class="card__desc">' + esc(p.resumoCard || p.resumo || "") + "</p>" +
-        '<div class="card__meta">' +
-          "<span>" + esc(firstCategory(p)) + " · " + (p.tempoLeitura || 2) + " min</span>" +
+        '<p class="card__meta">' +
+          (aluno ? '<span class="card__student">' + esc(aluno) + '</span><span class="card__sep" aria-hidden="true">·</span>' : "") +
+          "<span>" + esc(cat) + "</span>" +
+          '<span class="card__sep" aria-hidden="true">·</span>' +
+          "<span>" + (p.tempoLeitura || 2) + " min</span>" +
           '<span class="card__arrow" aria-hidden="true">↗</span>' +
-        "</div>" +
+        "</p>" +
+        '<p class="card__credit">' + esc(credit) + "</p>" +
       "</div>" +
     "</a>";
   }
@@ -224,16 +239,19 @@
       return hay.indexOf(q) !== -1;
     });
 
+    var destaque = state.cat === "Todas" && !state.q;
+
     grid.innerHTML = list.length
-      ? list.map(cardHTML).join("")
+      ? list.map(function (p, i) {
+          return cardHTML(p, destaque && i === 0 && p.slug === "zumbi-dos-palmares", i);
+        }).join("")
       : '<p class="empty">Nenhuma história com esse nome. Tente outra palavra ou limpe o filtro.</p>';
 
     if (contador) {
-      var total = C.totalPrevisto || P.length;
       if (state.cat !== "Todas" || state.q) {
         contador.innerHTML = "<b>" + list.length + "</b> de " + P.length + " pesquisas";
       } else {
-        contador.innerHTML = "<b>" + P.length + "</b> de " + total + " histórias";
+        contador.innerHTML = "<b>" + P.length + "</b> histórias";
       }
     }
 
@@ -257,44 +275,32 @@
             io.unobserve(e.target);
           }
         });
-      }, { threshold: 0.12, rootMargin: "0px 0px -6% 0px" });
+      }, { threshold: 0.08, rootMargin: "0px 0px -4% 0px" });
     }
     els.forEach(function (el) { io.observe(el); });
   }
 
-  /* ---------- NAV SCROLL ---------- */
-  function navScroll() {
-    var nav = document.getElementById("nav");
-    if (!nav) return;
-    var onScroll = function () {
-      nav.classList.toggle("is-scrolled", window.scrollY > 40);
-    };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-  }
-
   /* ---------- FOOTER ---------- */
   function renderFooter() {
-    var t = document.getElementById("footTurma");
-    var p = document.getElementById("footProfessor");
-    var a = document.getElementById("footAno");
+    var list = document.getElementById("footTurmaList");
     var a2 = document.getElementById("footAno2");
-    if (t) t.textContent = [C.turma, C.escola].filter(Boolean).join(" · ") || "—";
-    if (p) p.textContent = C.professor || "—";
-    if (a) a.textContent = C.ano || "—";
-    if (a2) a2.textContent = C.ano ? "© " + C.ano : "—";
+
+    if (list) {
+      var linhas = [C.turma, C.escola, C.professor, C.ano].filter(function (v) {
+        return v && String(v).trim();
+      });
+      list.innerHTML = linhas.map(function (v) { return "<li>" + esc(v) + "</li>"; }).join("");
+    }
+    if (a2) a2.textContent = C.ano ? "© " + C.ano : "";
   }
 
   /* ---------- INIT ---------- */
   function init() {
     renderHero();
-    renderMarquee();
     renderLegado();
-    renderAviso();
     renderChips();
     renderGrid();
     renderFooter();
-    navScroll();
 
     var search = document.getElementById("busca");
     if (search) {

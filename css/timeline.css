@@ -1,0 +1,41 @@
+/* ============================================================
+   LINHA DO TEMPO — lista editorial vertical
+   Sem carrossel, sem scroll horizontal escondido, sem "arraste".
+   ============================================================ */
+.timeline {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  border-top: 1px solid var(--ink);
+}
+
+.timeline__item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: clamp(12px, 3vw, 24px);
+  padding-block: 13px;
+  border-bottom: 1px solid var(--line);
+}
+
+.timeline__year {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(1.15rem, 3vw, 1.6rem);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: var(--clay-text);
+  min-width: 4ch;
+}
+
+.timeline__text {
+  font-size: var(--fs-body-s);
+  line-height: 1.55;
+  color: var(--text-2);
+}
+
+@media (min-width: 768px) {
+  .timeline {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: clamp(24px, 4vw, 48px);
+  }
+}

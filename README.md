@@ -39,8 +39,9 @@ consciencia-negra/
 │   ├── data.js         ⭐ O ÚNICO ARQUIVO QUE VOCÊ EDITA
 │   ├── app.js          Monta a home
 │   └── pessoa.js       Monta a página de pesquisa
-├── pessoas/            Coloque as fotos aqui
-└── assets/             Imagens do site (og.jpg etc.)
+├── pessoas/            Fotos das personalidades
+├── secoes/             Imagens de apoio (hero, legado, sobre)
+└── assets/             Imagens do site (og.png etc.)
 ```
 
 ---
@@ -82,11 +83,17 @@ Cole no fim, antes do `];`, e troque os valores:
 `Artes` · `Ativismo` · `Resistência` · `Abolicionismo` · `Direito`
 
 Você pode criar outras — os chips são gerados automaticamente a partir dos
-dados.
+dados. Para não poluir a interface, só aparecem categorias com **3 ou mais**
+histórias; as demais continuam valendo na busca e nos cards.
 
 ### Nome do aluno no card
-É o campo `aluno.nomes`. Ele aparece no **canto superior direito** do card.
-Para duplas ou trios, separe com vírgula: `"Juan, Eduardo, Fellype"`.
+É o campo `aluno.nomes`. Ele aparece na **linha de meta**, abaixo do resumo e
+fora da foto. Para duplas ou trios, separe com vírgula:
+`"Juan, Eduardo, Fellype"`.
+
+A atribuição é fechada: só existem os nomes de
+`kit-redesign/atribuicao-alunos.json`. Quando o campo vem vazio, o card e a
+página simplesmente não mostram aluno.
 
 ---
 
@@ -130,25 +137,20 @@ Se `galeria` for `[]` e `video` for `null`, os blocos simplesmente não aparecem
 
 ---
 
-## 6. Quando as pesquisas estiverem prontas
+## 6. Dados do projeto
 
-Em `js/data.js`, no topo:
-
-```js
-mostrarAvisoExemplo: false
-```
-
-Isso remove a faixa amarela de "modo molde". Também vale apagar ou substituir
-os 18 registros de exemplo.
-
-E atualize os dados do projeto:
+As 40 pesquisas reais já estão no site. Para completar a identificação da
+turma, edite o topo de `js/data.js`:
 
 ```js
-escola: "Nome da Escola",
+escola: "",
 turma: "3º Ano B",
-professor: "Prof. Nome",
+professor: "",
 ano: "2026"
 ```
+
+Os campos vazios não aparecem no rodapé. Preencha apenas o que deve ser
+publicado.
 
 ---
 
@@ -162,7 +164,7 @@ ano: "2026"
    git add .
    git commit -m "Site do projeto Consciência Negra"
    git branch -M main
-   git remote add origin https://github.com/SEU-USUARIO/consciencia-negra.git
+   git remote add origin https://github.com/usuario/consciencia-negra.git
    git push -u origin main
    ```
 3. No GitHub: **Settings → Pages**.
@@ -170,8 +172,10 @@ ano: "2026"
 5. Branch: `main` · Pasta: `/ (root)` · **Save**.
 6. Espere 1–2 minutos. O site fica em:
    ```
-   https://SEU-USUARIO.github.io/consciencia-negra/
+   https://usuario.github.io/consciencia-negra/
    ```
+
+   Troque `usuario` pelo seu nome de usuário do GitHub.
 
 > O arquivo `.nojekyll` já está incluído — ele evita que o GitHub tente
 > processar o site com Jekyll.
@@ -193,8 +197,8 @@ O `index.html` já tem as tags Open Graph apontando para `assets/og.png`
 troque os caminhos relativos pelas URLs absolutas:
 
 ```html
-<meta property="og:url" content="https://SEU-USUARIO.github.io/consciencia-negra/">
-<meta property="og:image" content="https://SEU-USUARIO.github.io/consciencia-negra/assets/og.png">
+<meta property="og:url" content="https://usuario.github.io/consciencia-negra/">
+<meta property="og:image" content="https://usuario.github.io/consciencia-negra/assets/og.png">
 ```
 
 Depois teste no [Facebook Sharing Debugger](https://developers.facebook.com/tools/debug/)
@@ -253,6 +257,6 @@ O hero, o legado, a linha do tempo e os números vêm de `CONFIG.central` em
 
 ## 13. Créditos
 
-- Tipografia: Anton, Instrument Serif e Inter (Google Fonts, licença aberta)
+- Tipografia: Anton e Inter (Google Fonts, licença aberta)
 - Conteúdo: alunos e professor responsável
 - Design e código: projeto escolar, uso livre para fins educacionais
